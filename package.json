@@ -1,0 +1,22 @@
+{
+	"name": "peepobot2",
+	"version": "1.0.0",
+	"main": "dist/index.js",
+	"scripts": {
+		"dev": "tsx index.ts",
+		"deploy": "tsx deploy-commands.ts",
+		"build": "tsc",
+		"lint": "eslint . --ext .ts"
+	},
+	"dependencies": {
+		"discord-api-types": "^0.37.90",
+		"discord.js": "^14.15.3",
+		"dotenv": "^16.4.5",
+		"tsx": "^4.15.7",
+		"typescript": "^5.5.2"
+	},
+	"devDependencies": {
+		"@types/node": "^20.14.8",
+		"eslint": "^9.5.0"
+	}
+}
