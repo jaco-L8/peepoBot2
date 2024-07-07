@@ -20,19 +20,13 @@ class CustomClient extends Client {
     commands: Collection<string, Command>;
 
     constructor() {
-        super({ intents: [GatewayIntentBits.Guilds] });
+        super({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildModeration] });
         this.commands = new Collection();
     }
 }
 
 // create a new client instance
 const client = new CustomClient();
-
-client.once(Events.ClientReady, readyClient => {
-    console.log(`Logged in as ${readyClient.user.tag}`);
-});
-
-client.login(process.env.TOKEN);
 
 
 
@@ -58,26 +52,23 @@ for (const folder of commandFolders) {
     }
 };
 
-// recieve interactions
 
-client.on(Events.InteractionCreate, async interaction => {
-    if (!interaction.isChatInputCommand()) return;
-    
-    const command = (interaction.client as CustomClient).commands.get(interaction.commandName);
+// events
+const eventsPath = path.join(__dirname, 'events');
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.ts'));
 
-    if (!command) {
-        console.error(`No command matching ${interaction.commandName} was found.`);
-        return;
+for (const file of eventFiles) {
+    const filePath = path.join(eventsPath, file);
+    const event = require(filePath);
+    if (event.once) {
+        client.once(event.name, (...args) => event.execute(...args));
+    } else {
+        client.on(event.name, (...args) => event.execute(...args));
     }
+    console.log(`Event ${event.name} loaded.`);
+};
 
-    try {
-        await command.execute(interaction);
-    } catch (error) {
-        console.error(error);
-        if (interaction.replied || interaction.deferred) {
-			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
-		} else {
-			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-		}
-    }
-});
+
+client.login(process.env.TOKEN);
+
+export { CustomClient , client };

@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "tsx index.ts",
 		"deploy": "tsx deploy-commands.ts",
+		"delete": "tsx delete-commands.ts",
 		"build": "tsc",
 		"lint": "eslint . --ext .ts"
 	},

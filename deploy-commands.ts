@@ -9,9 +9,10 @@ dotenv.config();
 const token = process.env.DISCORD_TOKEN;
 const clientId = process.env.DISCORD_CLIENT_ID;
 const guildId = process.env.DISCORD_GUILD;
+const guildTestId = process.env.DISCORD_TEST_GUILD;
 
 
-if (!token || !clientId || !guildId) {
+if (!token || !clientId || !guildId || !guildTestId) {
     throw new Error('Missing environment variable');
 }
 
@@ -63,7 +64,7 @@ const rest = new REST().setToken(token);
         // Deploy guild-specific commands
         console.log(`Started refreshing ${guildCommands.length} guild-specific application (/) commands.`);
         await rest.put(
-            Routes.applicationGuildCommands(clientId, guildId),
+            Routes.applicationGuildCommands(clientId, guildTestId),
             { body: guildCommands },
         );
         console.log(`Successfully reloaded guild-specific application (/) commands.`);
