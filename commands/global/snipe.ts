@@ -24,7 +24,7 @@ module.exports = {
                 .setColor(Math.random() * 0xffffff)
                 .setAuthor({ name: user?.user?.displayName || 'Unknown User', iconURL: user?.user?.displayAvatarURL() })
                 .setDescription(messageContent)
-                .setFooter({ text: `Deleted: ${new Date(deletedMessage.messageTime).toLocaleString()}` });
+                .setFooter({ text: `Deleted: ${new Date(deletedMessage.messageTime).toLocaleTimeString()}` });
                 
             await interaction.reply({ embeds: [embed] });
         }
