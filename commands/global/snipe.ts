@@ -21,7 +21,6 @@ module.exports = {
 
             // Create an embed
             const embed = new EmbedBuilder()
-                .setColor(Math.random() * 0xffffff)
                 .setAuthor({ name: user?.user?.displayName || 'Unknown User', iconURL: user?.user?.displayAvatarURL() })
                 .setDescription(messageContent)
                 .setFooter({ text: `Deleted: ${new Date(deletedMessage.messageTime).toLocaleTimeString()}` });

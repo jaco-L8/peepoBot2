@@ -5,14 +5,15 @@ module.exports = {
     name: Events.MessageDelete,
     once: false,
     async execute(message: Message) {
-        //console.log('messageCache: ', messageCache);
         const index = messageCache.findIndex(entry => entry.messageID === message.id);
         if (index !== -1) {
             messageCache[index].deleted = true;
-            
+            const messageID = message.id; // Capture the message ID
+
             // remove the message from the cache
             setTimeout(() => {
-                if (messageCache[index].deleted) {
+                const index = messageCache.findIndex(entry => entry.messageID === messageID);
+                if (index !== -1 && messageCache[index].deleted) {
                     messageCache.splice(index, 1);
                 }
             }, 30000); // 30 seconds
