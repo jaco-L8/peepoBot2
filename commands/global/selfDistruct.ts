@@ -39,8 +39,9 @@ module.exports = {
             process.exit(0);
         } else {
             const cooldownExpiresAt = Math.floor(cooldownEnd / 1000); 
-            await interaction.reply({ content: `odds=${Math.round(chance * 100)}, you suck >:(` });
-            await interaction.followUp({ content: `nope, try again in <t:${cooldownExpiresAt}:R>` });
+            await interaction.reply({ content: `odds=${Math.round(chance * 100)}, you suck >:(
+                
+                nope, try again in <t:${cooldownExpiresAt}:R>` });
         }
     },
 };
