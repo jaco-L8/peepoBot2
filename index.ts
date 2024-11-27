@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Collection, Events } from 'discord.js';
+import { Client, GatewayIntentBits, Collection, Events, PermissionsBitField } from 'discord.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
@@ -20,7 +20,7 @@ class CustomClient extends Client {
     commands: Collection<string, Command>;
 
     constructor() {
-        super({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildModeration] });
+        super({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildModeration, GatewayIntentBits.GuildMembers, GatewayIntentBits.AutoModerationExecution, GatewayIntentBits.AutoModerationConfiguration] });
         this.commands = new Collection();
     }
 }
