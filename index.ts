@@ -28,6 +28,16 @@ class CustomClient extends Client {
 // create a new client instance
 const client = new CustomClient();
 
+// Global error handling
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+    // Depending on your needs, you might want to exit the process
+    // process.exit(1);
+});
 
 
 //create a collection
