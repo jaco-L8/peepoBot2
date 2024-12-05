@@ -2,8 +2,8 @@ import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('selfdistruct')
-        .setDescription('Roll a D20: Get 20 to self-destruct the bot, 1-19 gives a decreasing timeout.'),
+        .setName('killbot')
+        .setDescription('Roll a D20: if it lands on a 20, the bot dies, if it lands on anything else you get timed out :3'),
     async execute(interaction: CommandInteraction) {
         try {
             if (!interaction.guild) return;
