@@ -1,4 +1,6 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { client, initializeClient } from '../../index';
+import * as dotenv from 'dotenv';
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -9,13 +11,27 @@ module.exports = {
             if (!interaction.guild) return;
 
             const userId = interaction.user.id;
-            const roll = Math.floor(Math.random() * 20) + 1; // Generates a number between 1 and 20
+            const roll = Math.floor(Math.random() * 20) + 1;
 
             if (roll === 20) {
                 await interaction.reply({ content: `🎲 You rolled a 20! Self-destructing...` });
                 await interaction.followUp({ content: 'bye bye :(' });
                 console.log('user: ' + interaction.user.displayName + ' self destructed the bot');
-                process.exit(0);
+                
+                // Destroy the current client
+                await client.destroy();
+                
+                // wait two hours before restarting
+                setTimeout(async () => {
+                    try {
+                        // Create a new client instance
+                        const newClient = initializeClient();
+                        await newClient.login(process.env.TOKEN);
+                        console.log('Bot has been restarted with a new client instance!');
+                    } catch (error) {
+                        console.error('Failed to restart bot:', error);
+                    }
+                }, 7200000);
             } else {
                 // Fixed timeout durations (1 = 60 min, 2 = 45 min, ..., 19 = 1 min)
                 const maxDurationMinutes = 60;

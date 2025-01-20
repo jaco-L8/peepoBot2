@@ -2,7 +2,6 @@ import { Client, GatewayIntentBits, Collection, Events, PermissionsBitField } fr
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-
 // initialise dotenv
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -25,9 +24,6 @@ class CustomClient extends Client {
     }
 }
 
-// create a new client instance
-const client = new CustomClient();
-
 // Global error handling
 process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
@@ -39,46 +35,50 @@ process.on('uncaughtException', (error) => {
     // process.exit(1);
 });
 
+// Initialize a new client instance
+function initializeClient() {
+    const newClient = new CustomClient();
+    
+    // Recreate commands collection
+    newClient.commands = new Collection();
 
-//create a collection
-client.commands = new Collection();
+    // Reload commands
+    const foldersPath = path.join(__dirname, 'commands');
+    const commandFolders = fs.readdirSync(foldersPath);
 
-const foldersPath = path.join(__dirname, 'commands');
-const commandFolders = fs.readdirSync(foldersPath);
+    for (const folder of commandFolders) {
+        const commandsPath = path.join(foldersPath, folder);
+        const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.ts'));
 
-for (const folder of commandFolders) {
-    const commandsPath = path.join(foldersPath, folder);
-    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.ts'));
-
-    for (const file of commandFiles) {
-        const filePath = path.join(commandsPath, file);
-        const command = require(filePath);
-        
-        if ('data' in command && 'execute' in command) {
-            client.commands.set(command.data.name, command);
-        } else {
-            console.log(`The command at ${filePath} is missing a required "data" or "execute" property.`);
+        for (const file of commandFiles) {
+            const filePath = path.join(commandsPath, file);
+            const command = require(filePath);
+            
+            if ('data' in command && 'execute' in command) {
+                newClient.commands.set(command.data.name, command);
+            }
         }
     }
-};
 
+    // Reload events
+    const eventsPath = path.join(__dirname, 'events');
+    const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.ts'));
 
-// events
-const eventsPath = path.join(__dirname, 'events');
-const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.ts'));
-
-for (const file of eventFiles) {
-    const filePath = path.join(eventsPath, file);
-    const event = require(filePath);
-    if (event.once) {
-        client.once(event.name, (...args) => event.execute(...args));
-    } else {
-        client.on(event.name, (...args) => event.execute(...args));
+    for (const file of eventFiles) {
+        const filePath = path.join(eventsPath, file);
+        const event = require(filePath);
+        if (event.once) {
+            newClient.once(event.name, (...args) => event.execute(...args));
+        } else {
+            newClient.on(event.name, (...args) => event.execute(...args));
+        }
     }
-    console.log(`Event ${event.name} loaded.`);
-};
 
+    return newClient;
+}
 
+// Initialize the client instance
+const client = initializeClient();
 client.login(process.env.TOKEN);
 
-export { CustomClient , client };
+export { CustomClient, client, initializeClient };
